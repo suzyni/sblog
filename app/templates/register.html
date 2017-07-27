@@ -1,0 +1,22 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Register New User</h1>
+  <form action='' method = 'post' name='register'>
+    {{ form.hidden_tag() }}
+    <p>
+      email:<br>
+      {{ form.email }}<br>
+    </p>
+    <p>
+      nickname:<br>
+      {{ form.nickname }}<br>
+    </p>
+    <p>
+      password:<br>
+      {{ form.password }}<br>
+    </p>
+    <p><input type="submit" value="Sign Up">
+  </form>
+{% endblock %}
