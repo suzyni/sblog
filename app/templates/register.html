@@ -8,10 +8,16 @@
     <p>
       email:<br>
       {{ form.email }}<br>
+      {% for error in form.errors.email %}
+      <br><span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     </p>
     <p>
       nickname:<br>
       {{ form.nickname }}<br>
+      {% for error in form.errors.nickname%}
+      <br><span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     </p>
     <p>
       password:<br>

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, BooleanField, TextAreaField
+from wtforms.validators import DataRequired, Length
+from app.models import User
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
@@ -11,3 +12,36 @@ class RegisterForm(FlaskForm):
     email = StringField('email', validators=[DataRequired()])
     nickname = StringField('nickname', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        # validate unique email address
+        user = User.query.filter_by(email=self.email.data).first()
+        if user != None:
+            self.email.errors.append('This email has been registered, please choose another one!')
+            return False
+        user = User.query.filter_by(nickname=self.nickname.data).first()
+        if user != None:
+            self.nickname.errors.append('This nickname already exists, please choose another one!')
+            return False
+        return True
+
+class EditForm(FlaskForm):
+    nickname = StringField('nickname', validators=[DataRequired()])
+    about_me = TextAreaField('about_me', validators=[Length(min=0, max=140)])
+    
+    def __init__(self, original_nickname, *args, **kwargs):
+        FlaskForm.__init__(self, *args, **kwargs)
+        self.original_nickname = original_nickname
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        if self.nickname.data == self.original_nickname:
+            return True
+        user = User.query.filter_by(nickname=self.nickname.data).first()
+        if user != None:
+            self.nickname.errors.append('This nickname already exists, please choose another one!')
+            return False
+        return True
