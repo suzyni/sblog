@@ -15,13 +15,20 @@
     <p>
       nickname:<br>
       {{ form.nickname }}<br>
-      {% for error in form.errors.nickname%}
+      {% for error in form.errors.nickname %}
       <br><span style="color: red;">[{{ error }}]</span>
       {% endfor %}
     </p>
     <p>
       password:<br>
       {{ form.password }}<br>
+    </p>
+    <p>
+      confirm password:<br>
+      {{ form.confirm }}<br>
+      {% for error in form.errors.password %}
+      <br><span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     </p>
     <p><input type="submit" value="Sign Up">
   </form>

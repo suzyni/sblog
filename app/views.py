@@ -33,7 +33,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(nickname=form.username.data).first()
-        if user == None:
+        if user is None:
             flash('User %s not found.' % form.username.data)
             return redirect(url_for('login'))
         if user.password != form.password.data:

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, EqualTo
 from app.models import User
 
 class LoginForm(FlaskForm):
@@ -13,7 +13,8 @@ class RegisterForm(FlaskForm):
     nickname = StringField('nickname', validators=[DataRequired()])
     password = PasswordField('password', validators=[
                    DataRequired(),
-                   EqualTo('confirm', message="Password must match")])
+                   EqualTo('confirm', message="Password must match")
+               ])
     confirm = PasswordField('repeat password')
 
     def validate(self):
@@ -21,12 +22,16 @@ class RegisterForm(FlaskForm):
             return False
         # validate unique email address
         user = User.query.filter_by(email=self.email.data).first()
-        if user != None:
-            self.email.errors.append('This email has been registered, please choose another one!')
+        if user is not None:
+            self.email.errors.append(
+                'This email has been registered, please choose another one!'
+            )
             return False
         user = User.query.filter_by(nickname=self.nickname.data).first()
-        if user != None:
-            self.nickname.errors.append('This nickname already exists, please choose another one!')
+        if user is not None:
+            self.nickname.errors.append(
+                'This nickname already exists, please choose another one!'
+            )
             return False
         return True
 
@@ -44,8 +49,10 @@ class EditForm(FlaskForm):
         if self.nickname.data == self.original_nickname:
             return True
         user = User.query.filter_by(nickname=self.nickname.data).first()
-        if user != None:
-            self.nickname.errors.append('This nickname already exists, please choose another one!')
+        if user is not None:
+            self.nickname.errors.append(
+                'This nickname already exists, please choose another one!'
+            )
             return False
         return True
 
