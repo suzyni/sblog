@@ -1,8 +1,8 @@
 from flask import render_template, flash, session, redirect, url_for, request, g, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from app import app, db, lm
-from .forms import LoginForm, RegisterForm, EditForm
-from .models import User
+from .forms import LoginForm, RegisterForm, EditForm, AddPostForm
+from .models import User, Post
 from datetime import datetime
 
 @app.route('/')
@@ -10,8 +10,7 @@ from datetime import datetime
 @login_required
 def index():
     user = g.user
-    posts = [{'author': {'nickname': 'ss'}, 'body': "i love fe!"},
-            {'author': {'nickname': 'fe'}, 'body': "i love ss even more!"}]
+    posts = Post.query.filter_by(user_id=g.user.get_id())
     return render_template('index.html', title='Home', user=user, posts=posts) 
 
 @lm.user_loader
@@ -67,8 +66,7 @@ def user(nickname):
     if user == None:
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
-    posts = [{'author': user, 'body': 'Test post #1'},
-             {'author': user, 'body': 'Test post #2'}]
+    posts = Post.query.filter_by(user_id=user.get_id())
     return render_template('user.html', user=user, posts=posts)
 
 @app.route('/edit', methods=['GET', 'POST'])
@@ -95,3 +93,15 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
+
+@app.route('/add_post', methods=['GET', 'POST'])
+@login_required
+def add_post():
+    form = AddPostForm()
+    if form.validate_on_submit():
+        p = Post(user_id=g.user.get_id(), body=form.body.data, timestamp=datetime.utcnow())
+        db.session.add(p)
+        db.session.commit()
+        flash('Your post has been saved.')
+        return redirect(url_for('index'))
+    return render_template('add_post.html', form=form)   

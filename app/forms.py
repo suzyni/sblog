@@ -11,7 +11,10 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[DataRequired()])
     nickname = StringField('nickname', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    password = PasswordField('password', validators=[
+                   DataRequired(),
+                   EqualTo('confirm', message="Password must match")])
+    confirm = PasswordField('repeat password')
 
     def validate(self):
         if not FlaskForm.validate(self):
@@ -45,3 +48,7 @@ class EditForm(FlaskForm):
             self.nickname.errors.append('This nickname already exists, please choose another one!')
             return False
         return True
+
+class AddPostForm(FlaskForm):
+    body = TextAreaField('body', validators=[Length(min=0, max=140)])
+

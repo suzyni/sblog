@@ -1,0 +1,22 @@
+<!-- extend base layout -->
+{% extends "base.html"%}
+{% block content %}
+  <h1>Adding New Post!</h1>
+  <form action="" method="post" name="add_post">
+    {{ form.hidden_tag()}}
+    <table>
+      <tr>
+        <td><img src="{{ g.user.avatar(128) }}"></td>
+        <td>User: {{ g.user.nickname }}</td>
+      </tr>
+      <tr>
+        <td>Say something here:
+        <td>{{ form.body(cols=32, rows=4) }}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" value="Post!"></td>
+      </tr>
+    </table>
+  </form>
+{% endblock %}
